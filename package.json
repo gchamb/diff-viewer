@@ -1,0 +1,41 @@
+{
+  "name": "diff-viewer",
+  "version": "1.0.0",
+  "description": "Terminal-launched git diff viewer in the browser",
+  "type": "module",
+  "bin": {
+    "diff-viewer": "./dist-server/cli.js"
+  },
+  "scripts": {
+    "dev:server": "tsx server/cli.ts",
+    "dev:frontend": "vite",
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "build:frontend": "vite build",
+    "build:server": "tsc -p tsconfig.server.json"
+  },
+  "dependencies": {
+    "@pierre/diffs": "latest",
+    "chokidar": "^4.0.3",
+    "diff-viewer": "link:../../desktop/diff-viewer",
+    "express": "^5.1.0",
+    "ignore": "^7.0.5",
+    "open": "^10.1.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

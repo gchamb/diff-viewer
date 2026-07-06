@@ -1,0 +1,4 @@
+allowBuilds:
+  esbuild: true
+overrides:
+  diff-viewer: link:../../desktop/diff-viewer
