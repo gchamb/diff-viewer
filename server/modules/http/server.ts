@@ -7,6 +7,7 @@ export class DiffViewerServer {
   readonly connections: Set<Response> = new Set();
   constructor() {
     this.server = express()
+    this.server.use(express.json())
     return this;
   }
 
@@ -57,4 +58,26 @@ export class DiffViewerServer {
     });
     return server;
   }
+
+  broadcastEvent(eventFn: () => string) {
+    const event = eventFn()
+    for (const connection of this.connections) {
+      connection.write(event);
+    }
+  }
+  // Run a mutating action, broadcast the fresh event to all clients, and
+  // respond with the result so the caller can surface any error.
+  mutationBroadcast<T>(
+    res: Response,
+    fn: () => T,
+    eventFn: () => string
+  ) {
+    try {
+      const result = fn();
+      this.broadcastEvent(eventFn);
+      res.status(200).json({ result });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  };
 }

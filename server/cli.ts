@@ -2,17 +2,19 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DiffViewerServer } from './modules/http/diff-viewer-server.js';
-import { isValidGitRepository, runGitDiff, startWatcher } from './modules/file-handling/files.js';
-import { DiffResponse } from './models/responses.js';
+import { DiffViewerServer } from './modules/http/server.js';
+import {
+  isValidGitRepository,
+  startWatcher,
+} from './modules/file-handling/files.js';
+import { Git } from './modules/file-handling/git.js';
 import { SignalConstants } from 'node:os';
-
+import { validateGitCommitRequest, validateGitRequest } from "./modules/http/validators/git.js"
 
 
 const registerSignalHandlers = (signal: keyof SignalConstants, handler: () => void) => process.on(signal, handler)
 
 function main() {
-
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
@@ -39,26 +41,12 @@ function main() {
   }
 
   const server = new DiffViewerServer()
-
-  const createDiffEvent = (): string => {
-    const fullDiff = runGitDiff(cwd)
-    const response: DiffResponse = {
-      patch: fullDiff,
-      cwd: cwd,
-    }
-
-    return `event: diff\ndata:${JSON.stringify(response)} \n\n`;
-  }
-
-  const handleBroadcast = () => {
-    const diffEvent = createDiffEvent();
-    for (const connection of server.connections) {
-      connection.write(diffEvent);
-    }
-  }
+  const git = new Git(cwd);
 
   // Start the watcher
-  const watcher = startWatcher(cwd, handleBroadcast)
+  const watcher = startWatcher(cwd, () => {
+    server.broadcastEvent(() => git.createDiffEvent())
+  })
 
   // Start server
   server
@@ -74,7 +62,19 @@ function main() {
       })
 
       server.addConnection(res)
-      res.write(createDiffEvent())
+      res.write(git.createDiffEvent())
+    })
+    .addRoute("/api/stage", "POST", (req, res) => {
+      server.mutationBroadcast(res, () => git.stageFile(validateGitRequest(req)), () => git.createDiffEvent())
+    })
+    .addRoute("/api/unstage", "POST", (req, res) => {
+      server.mutationBroadcast(res, () => git.unstageFile(validateGitRequest(req)), () => git.createDiffEvent())
+    })
+    .addRoute("/api/restore", "POST", (req, res) => {
+      server.mutationBroadcast(res, () => git.restoreFile(validateGitRequest(req)), () => git.createDiffEvent())
+    })
+    .addRoute("/api/commit", "POST", (req, res) => {
+      server.mutationBroadcast(res, () => git.commitChanges(validateGitCommitRequest(req)), () => git.createDiffEvent())
     })
     .start()
 
