@@ -68,7 +68,7 @@ export default function App() {
 
 
   const { additions, deletions } = computeStats(files);
-  const command = "git diff"
+  const command = "git diff HEAD"
 
   if (status === 'loading') {
     return (

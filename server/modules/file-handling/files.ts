@@ -28,18 +28,45 @@ export function buildIgnore(cwd: string): Ignore {
 }
 
 
-export function runGitDiff(cwd: string): string {
+function runGit(args: string[], cwd: string): string {
   try {
-    return execSync(['git', 'diff'].join(' '), {
+    return execSync(['git', ...args].join(' '), {
       cwd,
       maxBuffer: 100 * 1024 * 1024,
     }).toString();
   } catch (err: unknown) {
     const e = err as { stdout?: Buffer; stderr?: Buffer };
-    // git diff exits 1 on differences — that's expected
+    // git diff / git diff --no-index exit non-zero when differences exist — expected
     if (e.stdout) return e.stdout.toString();
     return '';
   }
+}
+
+function listUntrackedFiles(cwd: string): string[] {
+  return runGit(['ls-files', '--others', '--exclude-standard'], cwd)
+    .split('\n')
+    .map((f) => f.trim())
+    .filter(Boolean);
+}
+
+// Produce a synthetic "new file" patch for an untracked file so it renders as a
+// full-file addition in the diff viewer.
+function patchForUntrackedFile(cwd: string, file: string): string {
+  // git diff --no-index exits 1 when the paths differ, which is expected.
+  return runGit(['diff', '--no-index', '/dev/null', file], cwd);
+}
+
+export function runGitDiff(cwd: string): string {
+  // Tracked changes vs HEAD: covers modifications and deletions (staged + unstaged).
+  const tracked = runGit(['diff', 'HEAD'], cwd);
+
+  // Untracked (brand-new) files are invisible to `git diff`. Synthesize a
+  // new-file patch for each so they appear in the viewer.
+  const untracked = listUntrackedFiles(cwd)
+    .map((file) => patchForUntrackedFile(cwd, file))
+    .filter(Boolean);
+
+  return [tracked, ...untracked].join('\n');
 }
 
 export function startWatcher(cwd: string, onChange: () => void) {
