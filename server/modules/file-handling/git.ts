@@ -154,7 +154,7 @@ export class Git {
   // Does `path` exist in HEAD? Distinguishes tracked (restorable) files from
   // new/untracked ones (which must be deleted to "revert").
   existsInHead(file: string): boolean {
-    const res = this.run(['cat-file', '-e', `HEAD: ${file} `]);
+    const res = this.run(['cat-file', '-e', `HEAD:${file.trim()}`]);
     return res.ok;
   }
 
