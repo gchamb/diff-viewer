@@ -153,6 +153,123 @@ body {
   overflow: auto;
 }
 
+/* Sidebar + diff layout */
+.content {
+  display: flex;
+  height: calc(100vh - 48px);
+}
+
+.diff-wrap {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid #30363d;
+  background: #0d1117;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-group {
+  padding: 8px 0;
+}
+
+.sidebar-group-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8b949e;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-group-count {
+  font-size: 10px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 0 6px;
+  color: #8b949e;
+}
+
+.sidebar-list {
+  list-style: none;
+}
+
+.sidebar-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  color: #c9d1d9;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+}
+
+.sidebar-row:hover {
+  background: #161b22;
+}
+
+.sidebar-row.selected {
+  background: #1f6feb22;
+  border-left-color: #58a6ff;
+  color: #e6edf3;
+}
+
+.sidebar-row-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.sidebar-row-stats {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sidebar-row-stats .stat-additions,
+.sidebar-row-stats .stat-deletions {
+  font-size: 10px;
+}
+
+.sidebar-all {
+  margin-top: auto;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #30363d;
+  color: #8b949e;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+}
+
+.sidebar-all:hover {
+  background: #161b22;
+  color: #e6edf3;
+}
+
+.sidebar-all.selected {
+  color: #58a6ff;
+}
+
 /* Loading */
 .state-screen {
   display: flex;
@@ -213,6 +330,236 @@ body {
   animation: flash 0.3s ease-out;
 }
 
-.diff-wrap {
-  height: 100%;
+/* File header actions (renderHeaderMetadata slot) */
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  padding-right: 4px;
+}
+
+.file-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.badge-new {
+  color: #3fb950;
+  background: #3fb9501a;
+  border-color: #3fb95033;
+}
+
+.badge-deleted {
+  color: #f85149;
+  background: #f851491a;
+  border-color: #f8514933;
+}
+
+.badge-modified {
+  color: #d29922;
+  background: #d299221a;
+  border-color: #d2992233;
+}
+
+.badge-staged-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.85;
+}
+
+.chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid #30363d;
+  background: #21262d;
+  color: #c9d1d9;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.chip:hover {
+  background: #30363d;
+  color: #e6edf3;
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chip-danger {
+  color: #f85149;
+  border-color: #f8514933;
+}
+
+.chip-danger:hover {
+  background: #f851491a;
+  color: #ff7b72;
+}
+
+.chip-primary-solid {
+  background: #238636;
+  border-color: #2ea043;
+  color: #fff;
+}
+
+.chip-primary-solid:hover:not(:disabled) {
+  background: #2ea043;
+  color: #fff;
+}
+
+.chip-danger-solid {
+  background: #da3633;
+  border-color: #f85149;
+  color: #fff;
+}
+
+.chip-danger-solid:hover {
+  background: #f85149;
+  color: #fff;
+}
+
+/* Commit button */
+.commit-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #2ea043;
+  background: #238636;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.commit-btn:hover:not(:disabled) {
+  background: #2ea043;
+}
+
+.commit-btn:disabled {
+  background: #21262d;
+  border-color: #30363d;
+  color: #8b949e;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(1, 4, 9, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 20px 22px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e6edf3;
+}
+
+.modal-text {
+  font-size: 13px;
+  color: #8b949e;
+  line-height: 1.5;
+}
+
+.modal-error {
+  font-size: 12px;
+  color: #f85149;
+  background: #f851491a;
+  border: 1px solid #f8514933;
+  border-radius: 6px;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.commit-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 80px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #e6edf3;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  outline: none;
+}
+
+.commit-textarea:focus {
+  border-color: #58a6ff;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #e6edf3;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-width: 80vw;
+}
+
+.toast-error {
+  border-color: #f8514933;
+  color: #f85149;
+}
+
+.toast-info {
+  border-color: #2ea04333;
+  color: #3fb950;
 }
