@@ -1,7 +1,6 @@
 import { execFileSync } from "child_process";
 import {
   rmSync,
-  writeFileSync
 } from "fs";
 import path from "path";
 import { DiffResponse } from "../../models/responses.js";
@@ -163,7 +162,7 @@ export class Git {
   // Parse `git status--porcelain = v1` into per-file staged/unstaged status codes.
   // core.quotepath=false keeps non-ASCII paths literal instead of octal-escaped.
   getFileStatuses(): FileStatus[] {
-    const out = this.run(['-c', 'core.quotepath=false', 'status', '--porcelain=v1', '-z']);
+    const out = this.run(['-c', 'core.quotepath=false', 'status', '-z', '--untracked-files=all']);
     if (!out.ok) {
       return [];
     }
