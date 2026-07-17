@@ -17,7 +17,6 @@
     "@pierre/diffs": "latest",
     "@tanstack/react-query": "^5.101.2",
     "chokidar": "^4.0.3",
-    "diff-viewer": "link:../../desktop/diff-viewer",
     "express": "^5.1.0",
     "ignore": "^7.0.5",
     "open": "^10.1.2",
