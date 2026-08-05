@@ -48,9 +48,15 @@ export class DiffViewerServer {
     return this;
   }
   start() {
-    const server = this.server.listen(7777, () => {
-      console.log("Server is starting up")
-      open(`http://localhost:7777`)
+    const server = this.server.listen(0, () => {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Unable to determine the server port");
+      }
+
+      const url = `http://localhost:${address.port}`;
+      console.log(`Server is starting up at ${url}`);
+      open(url);
     });
     server.on('error', (err) => {
       console.error('Failed to start server:', err);
