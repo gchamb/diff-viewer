@@ -464,6 +464,250 @@ body {
   cursor: not-allowed;
 }
 
+/* Push button */
+.push-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #58a6ff;
+  background: #388bfd26;
+  color: #58a6ff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.push-btn:hover:not(:disabled) {
+  background: #1f6feb;
+  color: #fff;
+  border-color: #1f6feb;
+}
+
+.push-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Viewed files (review mode) */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-item .sidebar-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.viewed-checkbox {
+  flex-shrink: 0;
+  margin: 0 12px 0 4px;
+  accent-color: #2ea043;
+  cursor: pointer;
+}
+
+.sidebar-row.viewed .sidebar-row-name,
+.sidebar-row.viewed .badge,
+.sidebar-row.viewed .sidebar-row-stats {
+  opacity: 0.5;
+}
+
+.viewed-changed-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #d29922;
+}
+
+.badge-changed {
+  background: #d2992226;
+  border-color: #d2992266;
+  color: #d29922;
+}
+
+.viewed-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.viewed-toggle input {
+  margin: 0;
+  accent-color: #2ea043;
+  cursor: pointer;
+}
+
+.viewed-toggle.checked {
+  border-color: #2ea04366;
+  color: #3fb950;
+}
+
+/* Open in Neovim bar */
+.nvim-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(640px, calc(100vw - 32px));
+  padding: 8px 10px 8px 14px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  background: #161b22;
+  box-shadow: 0 8px 24px #010409a8;
+}
+
+.nvim-bar-target {
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #c9d1d9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.nvim-bar-key {
+  font-size: 11px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #8b949e;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+/* Review mode */
+.pr-link {
+  color: #58a6ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pr-link:hover {
+  text-decoration: underline;
+}
+
+.pr-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pr-branches {
+  font-size: 12px;
+  color: #8b949e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pr-branches code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: #c9d1d9;
+  background: #21262d;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.pr-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.pr-badge-draft {
+  background: #21262d;
+  border-color: #30363d;
+  color: #8b949e;
+}
+
+.pr-badge-approved {
+  background: #2ea04326;
+  border-color: #2ea04366;
+  color: #3fb950;
+}
+
+.pr-badge-changes_requested {
+  background: #f8514926;
+  border-color: #f8514966;
+  color: #f85149;
+}
+
+.pr-badge-review_required {
+  background: #d2992226;
+  border-color: #d2992266;
+  color: #d29922;
+}
+
+.review-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #2ea043;
+  background: #238636;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.review-btn:hover:not(:disabled) {
+  background: #2ea043;
+}
+
+.review-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+}
+
+.review-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-option:has(input:checked) {
+  border-color: #58a6ff;
+  background: #388bfd1a;
+}
+
+.review-option input {
+  accent-color: #1f6feb;
+  margin: 0;
+}
+
+.review-option-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+
+.review-option-hint {
+  grid-column: 2;
+  font-size: 12px;
+  color: #8b949e;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;

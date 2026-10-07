@@ -3,7 +3,7 @@ import {
   rmSync,
 } from "fs";
 import path from "path";
-import { DiffResponse } from "../../models/responses.js";
+import { DiffResponse, serializeDiffEvent } from "../../models/responses.js";
 
 // Machine-readable `git status --porcelain` codes (exactly the 2-char XY pair
 // git emits, so a `record.substring(0, 2)` value matches a member directly).
@@ -151,6 +151,27 @@ export class Git {
     }
   }
 
+  // Number of commits on the current branch that have not been pushed to its
+  // upstream. Returns 0 when no upstream is configured (nothing to push to a
+  // known remote-tracking branch).
+  aheadCount(): number {
+    const res = this.run(['rev-list', '--count', '@{upstream}..HEAD']);
+    if (!res.ok) {
+      return 0;
+    }
+    const n = parseInt(res.stdout.trim(), 10);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  push() {
+    // Push the current branch to its upstream, creating the upstream tracking
+    // ref if needed. Errors bubble up to the caller.
+    const r = this.run(['push']);
+    if (!r.ok) {
+      throw new Error(`Failed to push. stderr: ${r.stderr}`);
+    }
+  }
+
   // Does `path` exist in HEAD? Distinguishes tracked (restorable) files from
   // new/untracked ones (which must be deleted to "revert").
   existsInHead(file: string): boolean {
@@ -192,12 +213,14 @@ export class Git {
   createDiffEvent() {
     const fullDiff = this.getDiff()
     const response: DiffResponse = {
+      mode: "local",
       patch: fullDiff,
       cwd: this.cwd,
       statuses: this.getFileStatuses(),
+      ahead: this.aheadCount(),
     }
 
-    return `event: diff\ndata: ${JSON.stringify(response)} \n\n`;
+    return serializeDiffEvent(response);
   }
 
 }

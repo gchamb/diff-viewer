@@ -36,6 +36,24 @@ export class DiffViewerServer {
         return this;
     }
   }
+  // Register an SSE endpoint that sends the current state on connect and then
+  // receives everything `broadcastEvent` pushes.
+  addEventStream(path: string, eventFn: () => string) {
+    return this.addRoute(path, "GET", (req, res) => {
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.flushHeaders();
+
+      req.on("close", () => {
+        this.removeConnection(res);
+      });
+
+      this.addConnection(res);
+      res.write(eventFn());
+    });
+  }
+
   serveStatic(staticDir: string) {
     // Serve built JS/CSS/assets
     this.server.use(express.static(staticDir));
@@ -78,10 +96,18 @@ export class DiffViewerServer {
     fn: () => T,
     eventFn: () => string
   ) {
-    try {
+    this.mutation(res, () => {
       const result = fn();
       this.broadcastEvent(eventFn);
-      res.status(200).json({ result });
+      return result;
+    });
+  };
+
+  // Run an action that leaves the diff untouched, so connected clients have
+  // nothing to re-render.
+  mutation<T>(res: Response, fn: () => T) {
+    try {
+      res.status(200).json({ result: fn() });
     } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
