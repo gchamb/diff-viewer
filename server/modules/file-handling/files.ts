@@ -2,19 +2,24 @@ import chokidar from "chokidar";
 import path from "path";
 import ignore, { Ignore } from "ignore";
 import { existsSync, readFileSync, statSync } from "fs";
+import { execFileSync } from "child_process";
 
-export function isValidGitRepository(directoryPath: string): { valid: false, message: string } | { valid: true } {
-  const s = statSync(directoryPath);
-  if (!s.isDirectory()) {
-    return { valid: false, message: `${directoryPath} is not a directory.` }
+// The top level of the repository containing `directoryPath`. Git reports diff
+// paths relative to this root no matter which subdirectory it runs from, so
+// everything that turns those paths back into files must resolve against it.
+export function resolveRepoRoot(directoryPath: string): string {
+  if (!existsSync(directoryPath) || !statSync(directoryPath).isDirectory()) {
+    throw new Error(`${directoryPath} is not a directory.`);
   }
 
-  const dotGitPath = path.join(directoryPath, ".git");
-  if (!existsSync(dotGitPath)) {
-    return { valid: false, message: `${directoryPath} is an initialized git repository.` }
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      cwd: directoryPath,
+      stdio: ["ignore", "pipe", "ignore"],
+    }).toString().trim();
+  } catch {
+    throw new Error(`${directoryPath} is not inside a git repository.`);
   }
-
-  return { valid: true }
 }
 
 export function buildIgnore(cwd: string): Ignore {
